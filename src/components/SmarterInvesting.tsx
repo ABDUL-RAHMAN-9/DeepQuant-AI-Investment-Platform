@@ -2,35 +2,15 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import performanceBars from '@/assets/performance-bars.png';
-import assetAllocation from '@/assets/asset-allocation-bars.png';
-import riskManagement from '@/assets/risk-management-dots.png';
+import { useNavigate } from 'react-router-dom'; 
+
+import { features } from '@/lib/featureData';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const features = [
-  {
-    title: 'Transparent Performance Tracking',
-    description: 'Monitor portfolio growth with real-time, easy-to-read analytics.',
-    image: performanceBars,
-    imagePosition: 'left'
-  },
-  {
-    title: 'Seamless Asset Allocation',
-    description: 'Balance investments across asset classes for better returns.',
-    image: assetAllocation,
-    imagePosition: 'right'
-  },
-  {
-    title: 'Smart Risk Management',
-    description: 'AI analyzes volatility and trends to minimize risk exposure.',
-    image: riskManagement,
-    imagePosition: 'left'
-  }
-];
-
 const SmarterInvesting = () => {
-  const sectionRef = useRef<HTMLElement>(null);
+  const sectionRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const sections = sectionRef.current?.querySelectorAll('.feature-section');
@@ -50,42 +30,89 @@ const SmarterInvesting = () => {
     });
   }, []);
 
+  const handleDetailsClick = (featureId) => {
+    navigate(`/feature/${featureId}`);
+  };
+
   return (
-    <section ref={sectionRef} className="py-24 bg-gradient-to-b from-background to-background/50">
+    <section 
+      ref={sectionRef} 
+      className="py-24 md:py-32 bg-gradient-to-b from-background to-background/50 overflow-hidden" 
+    >
       <div className="container mx-auto px-6">
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-bold text-gradient mb-4">
+        
+        {/* Modernized Heading Section */}
+        <div className="text-center mb-20 md:mb-28 max-w-4xl mx-auto">
+          <h1 className="text-5xl md:text-7xl font-extrabold text-gradient mb-4 leading-tight">
             Smarter Investing Starts Here
-          </h2>
+          </h1>
+          <p className="text-xl md:text-2xl text-muted-foreground/90 font-light mt-4">
+            A next-generation platform engineered for the modern investor:
+            combining institutional-grade technology with transparent,
+            goal-oriented financial strategies.
+          </p>
         </div>
 
-        {features.map((feature, index) => (
-          <div
-            key={index}
-            className={`feature-section grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-32 last:mb-0 ${
-              feature.imagePosition === 'right' ? 'lg:grid-flow-dense' : ''
-            }`}
-          >
-            <div className={feature.imagePosition === 'right' ? 'lg:col-start-2' : ''}>
-              <h3 className="text-3xl md:text-4xl font-bold mb-4">{feature.title}</h3>
-              <p className="text-lg text-muted-foreground mb-6">{feature.description}</p>
-              <Button variant="outline" className="border-primary/50 hover:bg-primary/10">
-                Learn More
-              </Button>
-            </div>
+        {/* Feature List Structure */}
+        <div className="space-y-32 md:space-y-48">
+          {features.map((feature, index) => (
+            <div
+              key={feature.id}
+              className={`feature-section grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16 items-center ${
+                feature.imagePosition === 'right' ? 'lg:grid-flow-dense' : ''
+              }`}
+            >
+              
+              {/* Feature Content (Text Block) */}
+              <div 
+                className={`lg:col-span-6 ${
+                  feature.imagePosition === 'right' ? 'lg:col-start-7' : 'lg:col-start-1'
+                }`}
+              >
+                <div className="space-y-4 md:space-y-6">
+                  <span className="inline-block text-lg font-semibold text-primary/80 uppercase tracking-widest">
+                    Feature {index + 1}
+                  </span>
+                  <h3 className="text-4xl md:text-5xl font-bold leading-tight">
+                    {feature.title}
+                  </h3>
+                  <p className="text-2xl font-medium text-muted-foreground/90">
+                    {feature.tagline}
+                  </p>
+                  <p className="text-lg text-muted-foreground pt-2">
+                    {feature.description}
+                  </p>
+                </div>
+                
+                <div className="mt-8">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => handleDetailsClick(feature.id)} 
+                    className="border-2 border-primary/50 hover:bg-primary/10 text-lg px-8 py-6 font-semibold transition-all duration-300"
+                  >
+                    Explore Details &rarr;
+                  </Button>
+                </div>
+              </div>
 
-            <div className={`flex items-center justify-center ${feature.imagePosition === 'right' ? 'lg:col-start-1 lg:row-start-1' : ''}`}>
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-glow blur-3xl opacity-50" />
-                <img 
-                  src={feature.image} 
-                  alt={feature.title}
-                  className="relative z-10 w-full max-w-md animate-float"
-                />
+              {/* Feature Image (Visual Block) */}
+              <div 
+                className={`lg:col-span-6 flex items-center justify-center p-4 ${
+                  feature.imagePosition === 'right' ? 'lg:col-start-1 lg:row-start-1' : 'lg:col-start-7'
+                }`}
+              >
+                <div className="relative w-full max-w-xl">
+                  <div className="absolute inset-0 bg-gradient-glow blur-[50px] opacity-40 z-0 rounded-3xl" />
+                  <img 
+                    src={feature.image} 
+                    alt={feature.title}
+                    className="relative z-10 w-full rounded-xl shadow-2xl transition-transform duration-1000 animate-float"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

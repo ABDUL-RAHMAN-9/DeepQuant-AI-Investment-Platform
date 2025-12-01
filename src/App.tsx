@@ -5,6 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import FeatureDetailPage from "./pages/FeatureDetailPage"; 
+// 1. Import the new component
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -14,9 +17,11 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        {/* 2. Integrate ScrollToTop inside BrowserRouter */}
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/feature/:featureId" element={<FeatureDetailPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
