@@ -1,4 +1,6 @@
+// tailwind.config.js
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate"; // <--- ADD THIS LINE
 
 export default {
   darkMode: ["class"],
@@ -101,7 +103,12 @@ export default {
         "progress": {
           "0%": { width: "0%" },
           "100%": { width: "100%" }
-        }
+        },
+        // UPDATED: Keyframes for infinite scrolling (Right-to-Left)
+        "scroll": {
+          from: { transform: 'translateX(-50%)' }, // Start from the position of the second copy
+          to: { transform: 'translateX(0)' },      // End when the first copy is back in place        
+          },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -111,9 +118,11 @@ export default {
         "glow-pulse": "glow-pulse 3s ease-in-out infinite",
         "float": "float 6s ease-in-out infinite",
         "slide-up": "slide-up 0.6s ease-out",
-        "progress": "progress 2.5s ease-out"
+        "progress": "progress 2.5s ease-out",
+        // ADDED: Animation utility class for infinite scrolling
+        "scroll": 'scroll 40s linear infinite', // Adjust '40s' for desired speed
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate], // <--- CHANGED FROM require()
 } satisfies Config;
