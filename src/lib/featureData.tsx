@@ -1,18 +1,20 @@
 // src/lib/featureData.ts
 
+import { TrendingUp, PieChart, ShieldCheck, LucideIcon } from 'lucide-react';
+
 // Replaced local imports with the provided URLs
 const IMAGE_PERFORMANCE = 'https://images.unsplash.com/photo-1645226880663-81561dcab0ae?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 const IMAGE_ASSET_ALLOCATION = 'https://images.unsplash.com/photo-1555537827-fb548b59e691?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDIzfHx8ZW58MHx8fHx8';
 const IMAGE_RISK_MANAGEMENT = 'https://images.unsplash.com/photo-1699878205424-061f7e4775f8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
-
 
 export interface Feature {
   id: string; // Unique ID for routing
   title: string;
   tagline: string;
   description: string;
-  image: string; // Now holds the external URL
+  image: string; // Holds the external URL
   imagePosition: 'left' | 'right';
+  icon: LucideIcon; // Added for UI compatibility
   // Extended content for the detail page
   detailContent: {
     heading: string;
@@ -26,8 +28,9 @@ export const features: Feature[] = [
     title: 'AI-Powered Portfolio Intelligence',
     tagline: 'Institutional-Grade Analytics for Strategic Growth and Alpha.',
     description: 'Gain a competitive edge with proprietary, real-time performance analytics and predictive modeling, ensuring full transparency and proactive investment decisions based on deep, actionable market insights.',
-    image: IMAGE_PERFORMANCE, // NEW URL
+    image: IMAGE_PERFORMANCE,
     imagePosition: 'left',
+    icon: TrendingUp, // Matches the "Growth/AI" theme
     detailContent: {
       heading: 'Deeper Dive into Predictive Modeling:',
       points: [
@@ -46,8 +49,9 @@ export const features: Feature[] = [
     title: 'Dynamic Multi-Asset Allocation',
     tagline: 'Maximize Risk-Adjusted Returns with Algorithmic Precision.',
     description: 'Effortlessly optimize your capital structure across diverse asset classes. Our sophisticated algorithms dynamically adjust holdings to maximize risk-adjusted returns and accelerate long-term wealth accumulation with superior efficiency.',
-    image: IMAGE_ASSET_ALLOCATION, // NEW URL
+    image: IMAGE_ASSET_ALLOCATION,
     imagePosition: 'right',
+    icon: PieChart, // Matches the "Allocation" theme
     detailContent: {
       heading: 'The Engineering Behind Our Allocation:',
       points: [
@@ -66,8 +70,9 @@ export const features: Feature[] = [
     title: 'Proactive Volatility & Risk Modeling',
     tagline: 'Superior Capital Preservation Through Predictive Analysis.',
     description: 'Our proprietary AI engine continuously assesses market volatility, identifies potential tail risks, and implements dynamic hedging strategies to protect capital and rigorously maintain your target risk profiles, ensuring stability.',
-    image: IMAGE_RISK_MANAGEMENT, // NEW URL
+    image: IMAGE_RISK_MANAGEMENT,
     imagePosition: 'left',
+    icon: ShieldCheck, // Matches the "Security/Risk" theme
     detailContent: {
       heading: 'Robust Risk Mitigation Framework:',
       points: [

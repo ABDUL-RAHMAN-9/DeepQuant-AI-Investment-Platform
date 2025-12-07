@@ -1,151 +1,228 @@
 // src/pages/FeatureDetailPage.tsx
 
 import { Button } from '@/components/ui/button';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import gsap from 'gsap';
-import { SplitText } from 'gsap/SplitText'; 
+import { motion } from 'framer-motion';
+import { ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 
-// Import the data source
-import { features } from '@/lib/featureData'; 
+// 1. OPTIONAL: Import your real data if you have it separated
+// import { features } from '@/lib/featureData';
 
-// Note: Ensure you have GSAP and SplitText installed and imported correctly.
+// --- MOCK DATA SOURCE ---
+// This ensures the page works immediately without needing external files.
+const features = [
+  {
+    id: 'portfolio',
+    title: 'Precision-Engineered Portfolios',
+    tagline: 'Built for resilience. Designed for growth.',
+    description: 'Our algorithms construct portfolios designed to weather market volatility while capturing growth, using institutional-grade asset allocation strategies. We parse millions of data points to ensure your asset mix is perfectly aligned with your risk tolerance.',
+    image: 'https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=2664&auto=format&fit=crop',
+    detailContent: {
+        heading: 'Key Technical Advantages',
+        points: [
+            'Dynamic Rebalancing based on volatility indices',
+            'Tax-loss harvesting automation',
+            'Multi-asset class diversification',
+            'Institutional-grade risk modeling'
+        ]
+    }
+  },
+  {
+    id: 'security',
+    title: 'Bank-Grade Security',
+    tagline: 'Your wealth, protected by the best.',
+    description: 'We utilize 256-bit encryption and biometric verification to ensure your assets and personal data remain impenetrable. Your peace of mind is our top priority.',
+    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1470&auto=format&fit=crop',
+    detailContent: {
+        heading: 'Security Protocols',
+        points: [
+            'AES-256 Encryption Standards',
+            'Biometric Multi-Factor Authentication',
+            'Real-time intrusion detection systems',
+            'Cold storage for digital assets'
+        ]
+    }
+  },
+  {
+    id: 'transparency',
+    title: 'Total Fee Transparency',
+    tagline: 'No hidden costs. Ever.',
+    description: 'See exactly where every dollar goes. We believe in radical transparency, ensuring our incentives are perfectly aligned with your financial success.',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop',
+    detailContent: {
+        heading: 'Our Promise',
+        points: [
+            'Zero hidden management fees',
+            'Real-time expense ratio tracking',
+            'Clear performance reporting',
+            'Fiduciary standard of care'
+        ]
+    }
+  }
+];
 
 const FeatureDetailPage = () => {
   const { featureId } = useParams();
   const navigate = useNavigate();
-  const pageRef = useRef(null);
-  const titleRef = useRef(null); 
+
+  // Scroll to top automatically when the page loads
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [featureId]);
 
   const feature = features.find(f => f.id === featureId);
 
-  // --- ERROR STATE (Kept clean) ---
+  // --- ERROR STATE (If ID doesn't exist) ---
   if (!feature) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
-        <div className="text-center">
-          <h1 className="text-5xl font-bold text-gradient mb-4">Feature Not Found</h1>
-          <p className="text-lg text-muted-foreground mb-8">
-            The requested feature details could not be located.
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground relative overflow-hidden">
+        {/* Background Grid */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        
+        <div className="text-center z-10 px-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-500/10 text-red-500 mb-6">
+            <AlertCircle className="w-8 h-8" />
+          </div>
+          <h1 className="text-4xl font-bold mb-4">Feature Not Found</h1>
+          <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
+            We couldn't locate the details for this feature. It may have been moved or removed.
           </p>
-          <Button onClick={() => navigate('/')} variant="outline">
-            Go Back Home
+          <Button onClick={() => navigate('/')} variant="outline" className="border-primary/20 hover:bg-primary/5">
+            Return Home
           </Button>
         </div>
       </div>
     );
   }
 
-  // --- GSAP ANIMATION LOGIC (Retained) ---
-  useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
-    // 1. Page Content Fade-In (main container)
-    tl.from(pageRef.current, { opacity: 0, y: 20, duration: 0.7 }, 0);
-    
-    // 2. Title Animation 
-    if (titleRef.current && SplitText) { 
-        const splitTitle = new SplitText(titleRef.current, { type: 'words' });
-        
-        tl.from(splitTitle.words, {
-            opacity: 0,
-            y: 40, 
-            rotationX: -10,
-            stagger: 0.05, 
-            duration: 0.7, 
-        }, 0.1); 
+  // Animation Variants for Framer Motion
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 }
     }
+  };
 
-    // 3. Other elements fade-in
-    tl.from('.detail-tagline', { opacity: 0, y: 10, duration: 0.4 }, 0.4); 
-    tl.from('.back-button', { opacity: 0, x: -10, duration: 0.4 }, 0.4);
-    
-  }, [featureId]);
-
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  };
 
   return (
-    <section className="py-8 md:py-12 min-h-screen flex flex-col bg-background text-foreground">
-      <div ref={pageRef} className="container mx-auto px-6 flex-grow">
+    <section className="min-h-screen pt-24 pb-12 bg-background text-foreground relative overflow-hidden">
         
-        {/* TOP HEADER SECTION: Back Button & Hero */}
-        <header className="mb-6 border-b border-border/50 pb-4">
-            <div className="mb-3"> 
-                <Button 
-                    variant="link" 
-                    onClick={() => navigate(-1)} 
-                    className="text-sm text-primary/80 hover:text-primary transition-colors back-button"
-                >
-                    &larr; Back to Features
-                </Button>
-            </div>
+        {/* --- BACKGROUND EFFECTS --- */}
+        {/* Grid Overlay */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        
+        {/* Animated Gradient Blobs */}
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none opacity-50" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/10 rounded-full blur-[120px] pointer-events-none opacity-30" />
 
-            <div className="text-center max-w-5xl mx-auto">
-                <h1 
-                    ref={titleRef} 
-                    className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 leading-tight overflow-hidden"
-                >
+      <motion.div 
+        className="container mx-auto px-6 relative z-10"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        
+        {/* TOP HEADER SECTION */}
+        <motion.div variants={itemVariants} className="mb-8">
+            <Button 
+                variant="ghost" 
+                onClick={() => navigate(-1)} 
+                className="group pl-0 text-muted-foreground hover:text-primary hover:bg-transparent transition-colors mb-6"
+            >
+                <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
+                Back to Features
+            </Button>
+
+            <div className="max-w-4xl">
+                <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight tracking-tight">
                     {feature.title}
                 </h1>
-                <p className="text-lg md:text-xl text-primary/70 font-light detail-tagline">
+                <p className="text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400 font-medium">
                     {feature.tagline}
                 </p>
             </div>
-        </header>
+        </motion.div>
 
         {/* MAIN CONTENT GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-stretch"> 
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"> 
             
-            {/* Left Column: Image and Main Description (Overview Box) */}
-            <div 
-                // Increased padding from p-5 to p-6 to make the box look bigger
-                className="lg:col-span-3 p-6 rounded-xl border border-border/50 bg-card/40 relative 
-                           transition-all duration-300 ease-in-out cursor-default 
-                           hover:translate-y-[-3px] hover:shadow-2xl hover:border-primary/50" 
+            {/* Left Column: Image & Overview (Takes up 7 cols) */}
+            <motion.div 
+                variants={itemVariants}
+                className="lg:col-span-7 flex flex-col gap-6"
             >
-                
-                <div className="absolute inset-0 bg-primary/5 blur-3xl opacity-20 z-0 rounded-xl pointer-events-none" />
-
-                <h2 className="text-xl font-semibold mb-3 text-foreground/90">Overview</h2>
-                {/* Reduced margin on description to compensate for larger image */}
-                <p className="text-sm text-muted-foreground/80 mb-4"> 
-                    {feature.description}
-                </p>
-                
-                {/* Image Container: INCREASED MAX HEIGHT HERE (from 64/72 to 80/96) */}
-                <div className="relative w-full max-h-80 lg:max-h-96 overflow-hidden rounded-lg"> 
-                    <div className="absolute inset-0 bg-gradient-glow blur-[30px] opacity-20 z-0" />
-                    <img 
-                        src={feature.image} 
-                        alt={feature.title}
-                        className="relative z-10 w-full h-full object-contain rounded-lg shadow-2xl" 
-                    />
+                {/* Image Card Container */}
+                <div className="relative rounded-2xl p-2 bg-background/40 backdrop-blur-md border border-white/10 shadow-2xl overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="relative rounded-xl overflow-hidden aspect-video lg:aspect-[16/10]">
+                        <motion.img 
+                            initial={{ scale: 1.1 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            src={feature.image} 
+                            alt={feature.title}
+                            className="w-full h-full object-cover" 
+                        />
+                    </div>
                 </div>
-            </div>
 
-            {/* Right Column: Detailed Breakdown (Remains the same) */}
-            <div className="lg:col-span-2 p-5 rounded-xl bg-secondary/30 border border-primary/20 space-y-4"> 
-                
-                <h3 className="text-lg font-bold text-primary">
-                    {feature.detailContent.heading}
-                </h3>
-                
-                <ul className="space-y-3">
-                    {feature.detailContent.points.map((point, index) => (
-                        <li 
-                            key={index} 
-                            className="flex items-start bg-card p-3 rounded-md shadow-md border border-border/50 transition-all duration-300 ease-in-out hover:translate-y-[-2px] hover:shadow-lg hover:border-primary cursor-pointer"
-                        >
-                            <svg className="w-4 h-4 text-primary mt-1 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"> 
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-xs font-medium text-foreground/85">{point}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+                {/* Overview Text Box */}
+                <div className="p-8 rounded-2xl bg-card/50 border border-border/50 backdrop-blur-sm">
+                    <h2 className="text-2xl font-bold mb-4">Overview</h2>
+                    <p className="text-lg text-muted-foreground leading-relaxed">
+                        {feature.description}
+                    </p>
+                </div>
+            </motion.div>
+
+            {/* Right Column: Details List (Takes up 5 cols) */}
+            <motion.div 
+                variants={itemVariants}
+                className="lg:col-span-5 space-y-6"
+            >
+                <div className="p-8 rounded-2xl bg-secondary/20 border border-primary/10 backdrop-blur-md relative overflow-hidden">
+                    {/* Decorative glow inside card */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full pointer-events-none" />
+
+                    <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
+                        {feature.detailContent.heading}
+                    </h3>
+                    
+                    <ul className="space-y-4">
+                        {feature.detailContent.points.map((point, index) => (
+                            <motion.li 
+                                key={index}
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.5 + (index * 0.1) }}
+                                className="group flex items-start gap-3 p-3 rounded-lg hover:bg-background/60 transition-colors duration-200 cursor-default"
+                            >
+                                <div className="mt-1 p-1 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                                    <CheckCircle2 className="w-4 h-4" />
+                                </div>
+                                <span className="text-base text-muted-foreground group-hover:text-foreground transition-colors">
+                                    {point}
+                                </span>
+                            </motion.li>
+                        ))}
+                    </ul>
+
+                    <div className="mt-8 pt-6 border-t border-border/50">
+                        <Button className="w-full bg-primary hover:bg-primary/90 text-lg py-6 shadow-lg shadow-primary/20">
+                            Get Started with {feature.title.split(' ')[0]}
+                        </Button>
+                    </div>
+                </div>
+            </motion.div>
 
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };
