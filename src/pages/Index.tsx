@@ -19,6 +19,7 @@ import Footer from "@/components/Footer";
 const Index = () => {
     const [loading, setLoading] = useState(true);
 
+    // UX Improvement: Lock scroll while loader is active
     useEffect(() => {
         if (loading) {
             document.body.style.overflow = "hidden";
@@ -30,64 +31,68 @@ const Index = () => {
 
     return (
         <div className="relative min-h-screen bg-background text-foreground selection:bg-primary/20 selection:text-primary overflow-x-hidden">
-            {/* --- LAYER 1: BACKGROUND GRID (z-0) --- */}
-            {/* This sits at the very back */}
-            <div
-                className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none"
-                style={{
-                    backgroundImage:
-                        "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
-                    backgroundSize: "40px 40px",
-                }}
-            />
-
-            {/* --- LAYER 2: SPLINE ANIMATION (z-10) --- */}
             {/* 
-         - Sits ABOVE the grid (z-10 vs z-0).
-         - We use 'fixed' so it stays on screen while you scroll (creating a cool parallax effect).
-         - It loads IMMEDIATELY (no waiting for loader). 
+        --- 1. HERO BACKGROUND LAYER ONLY --- 
+        CHANGED: Used 'absolute' instead of 'fixed'.
+        RESULT: This background stays at the TOP of the page. 
+        It sits behind the Hero, but as you scroll down, it disappears.
+        It will NOT interfere with the CTA section at the bottom.
       */}
-            <div className="fixed inset-0 z-10 flex items-center justify-center">
-                <iframe
-                    src="https://my.spline.design/orb-j2bnsGUiEKVrsn1TugjuetDS/"
-                    frameBorder="0"
-                    width="100%"
-                    height="100%"
-                    className="pointer-events-none opacity-80" // opacity-80 blends it slightly with dark mode
-                    title="3D Abstract Orb"
+            <div className="absolute top-0 left-0 w-full h-[120vh] z-0 pointer-events-none overflow-hidden">
+                {/* Grid Pattern (Hero Only) */}
+                <div
+                    className="absolute inset-0 opacity-[0.03]"
+                    style={{
+                        backgroundImage:
+                            "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+                        backgroundSize: "40px 40px",
+                    }}
                 />
+
+                {/* Spline 3D Orb (Hero Only) */}
+                {/* We keep it here (not inside HeroSection) so it loads immediately and doesn't reset */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <iframe
+                        src="https://my.spline.design/orb-j2bnsGUiEKVrsn1TugjuetDS/"
+                        frameBorder="0"
+                        width="100%"
+                        height="100%"
+                        className="w-full h-full opacity-80"
+                        title="3D Abstract Orb"
+                    />
+                </div>
+
+                {/* Bottom Fade: Smoothly blends the Orb area into the solid background below */}
+                <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent" />
             </div>
 
-            {/* --- LAYER 3: THE LOADER (z-50) --- */}
+            {/* --- 2. LOADER OVERLAY (Fixed on Top) --- */}
             <AnimatePresence mode="wait">
                 {loading && <Loader onComplete={() => setLoading(false)} />}
             </AnimatePresence>
 
-            {/* --- LAYER 4: MAIN CONTENT (z-20) --- */}
-            {/* 
-         - Sits ABOVE the Spline Animation (z-20 vs z-10).
-         - This ensures buttons are clickable and text is readable.
-      */}
-            <div className="relative z-20">
+            {/* --- 3. MAIN CONTENT --- */}
+            <div className="relative z-10">
                 <Navigation />
 
                 <main>
-                    {/* HeroSection is now transparent so we can see the layers below */}
+                    {/* Hero Section (Transparent background so Orb shows through) */}
                     <HeroSection />
 
                     {/* 
-             NOTE: As you scroll down, if other sections have a solid background color (bg-background),
-             they will cover the orb. If you want the orb visible everywhere, remove bg colors from other sections.
+             SOLID BACKGROUND WRAPPER
+             All components below the Hero live inside this solid background.
+             This guarantees the Spline Orb NEVER shows up behind them.
           */}
-                    <div className="bg-background/80 backdrop-blur-sm">
-                        {" "}
-                        {/* Optional: Adds a slight blur behind rest of content */}
+                    <div className="relative bg-background z-20 shadow-2xl ">
                         <TrustedBy />
                         <InvestmentInsights />
                         <SmarterInvesting />
                         <CoreFeatures />
                         <MetricsSection />
                         <PricingSection />
+
+                        {/* The CTA Section is now completely isolated on a solid background */}
                         <CTASection />
                     </div>
                 </main>
