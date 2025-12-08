@@ -1,8 +1,6 @@
-// src/components/HeroSection.tsx
-
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 import { ArrowRight, ChevronRight, PlayCircle } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
 
 // --- IMAGE IMPORTS ---
 import img1 from "@/assets/img-1.avif";
@@ -12,55 +10,50 @@ import img4 from "@/assets/img-4.avif";
 
 const trustedAvatars = [img1, img2, img3, img4];
 
-const HeroSection = () => {
-    // Animation Variants
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.15,
-                delayChildren: 0.2,
+// --- HOOK: Intersection Observer ---
+const useIsVisible = (ref: React.RefObject<HTMLElement>) => {
+    const [isIntersecting, setIntersecting] = useState(false);
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIntersecting(true);
+                    observer.disconnect();
+                }
             },
-        },
-    };
+            { threshold: 0.1 }
+        );
+        if (ref.current) observer.observe(ref.current);
+        return () => observer.disconnect();
+    }, [ref]);
+    return isIntersecting;
+};
 
-    const itemVariants = {
-        hidden: { opacity: 0, y: 30 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.8, ease: "easeOut" },
-        },
-    };
+const HeroSection = () => {
+    const sectionRef = useRef<HTMLElement>(null);
+    const isVisible = useIsVisible(sectionRef);
 
     return (
         <section
+            ref={sectionRef}
             id="home"
             // IMPORTANT: bg-transparent allows the Spline Orb (in Index.tsx) to show through
             className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-transparent">
-            {/* 
-               We kept this Gradient Vignette because it makes the white text 
-               readable against the colorful Orb background 
-            */}
+            {/* --- BACKGROUND LAYER --- */}
+
+            {/* 1. Gradient Vignette - Makes white text readable against the colorful Orb */}
             <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-transparent to-background z-0" />
 
             {/* --- CONTENT LAYER --- */}
-            {/* 
-               The content sits naturally inside the section. 
-               Since Index.tsx set this whole section wrapper to z-20, 
-               these buttons will definitely be clickable.
-            */}
-            <motion.div
-                className="container mx-auto px-6 relative z-10 text-center"
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible">
+            <div className="container mx-auto px-6 relative z-10 text-center">
                 {/* 1. Animated Pill Badge */}
-                <motion.div
-                    variants={itemVariants}
-                    className="flex justify-center mb-8">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/10 backdrop-blur-md shadow-[0_0_20px_-5px_rgba(var(--primary-rgb),0.3)]">
+                <div
+                    className={`flex justify-center mb-8 transition-all duration-1000 ease-out transform ${
+                        isVisible
+                            ? "opacity-100 translate-y-0"
+                            : "opacity-0 translate-y-12"
+                    }`}>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/10 backdrop-blur-md shadow-[0_0_20px_-5px_rgba(var(--primary-rgb),0.3)] hover:bg-primary/20 transition-colors duration-300">
                         <span className="relative flex h-2 w-2">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
@@ -70,12 +63,16 @@ const HeroSection = () => {
                         </span>
                         <ChevronRight className="w-4 h-4 text-primary/70" />
                     </div>
-                </motion.div>
+                </div>
 
                 {/* 2. Main Headline */}
-                <motion.h1
-                    variants={itemVariants}
-                    className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight tracking-tight">
+                <h1
+                    style={{ transitionDelay: "100ms" }}
+                    className={`text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight tracking-tight transition-all duration-1000 ease-out transform ${
+                        isVisible
+                            ? "opacity-100 translate-y-0"
+                            : "opacity-0 translate-y-12"
+                    }`}>
                     Empowering Your
                     <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-primary animate-gradient-x">
@@ -83,21 +80,30 @@ const HeroSection = () => {
                     </span>
                     <br />
                     Technology
-                </motion.h1>
+                </h1>
 
                 {/* 3. Subheadline */}
-                <motion.p
-                    variants={itemVariants}
-                    className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+                <p
+                    style={{ transitionDelay: "200ms" }}
+                    className={`text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed drop-shadow-md transition-all duration-1000 ease-out transform ${
+                        isVisible
+                            ? "opacity-100 translate-y-0"
+                            : "opacity-0 translate-y-12"
+                    }`}>
                     Our innovative AI technology transforms asset management by
                     analyzing vast data sets in real-time, giving you the edge
                     in a volatile market.
-                </motion.p>
+                </p>
 
                 {/* 4. Buttons */}
-                <motion.div
-                    variants={itemVariants}
-                    className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                <div
+                    style={{ transitionDelay: "300ms" }}
+                    className={`flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 transition-all duration-1000 ease-out transform ${
+                        isVisible
+                            ? "opacity-100 translate-y-0"
+                            : "opacity-0 translate-y-12"
+                    }`}>
+                    {/* Primary Button */}
                     <Button
                         size="lg"
                         className="group relative h-14 px-8 text-lg bg-primary hover:bg-primary/90 text-primary-foreground overflow-hidden rounded-full shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-105">
@@ -108,6 +114,7 @@ const HeroSection = () => {
                         </span>
                     </Button>
 
+                    {/* Secondary Button */}
                     <Button
                         size="lg"
                         variant="outline"
@@ -117,27 +124,29 @@ const HeroSection = () => {
                             Watch Demo
                         </span>
                     </Button>
-                </motion.div>
+                </div>
 
                 {/* 5. Social Proof / Avatars */}
-                <motion.div
-                    variants={itemVariants}
-                    className="flex flex-col md:flex-row items-center justify-center gap-4 p-4 rounded-2xl bg-background/40 border border-white/5 backdrop-blur-sm w-fit mx-auto">
+                <div
+                    style={{ transitionDelay: "400ms" }}
+                    className={`flex flex-col md:flex-row items-center justify-center gap-4 p-4 rounded-2xl bg-background/40 border border-white/5 backdrop-blur-sm w-fit mx-auto transition-all duration-1000 ease-out transform ${
+                        isVisible
+                            ? "opacity-100 translate-y-0"
+                            : "opacity-0 translate-y-12"
+                    }`}>
                     <div className="flex -space-x-4">
                         {trustedAvatars.map((imgSrc, index) => (
-                            <motion.div
+                            <div
                                 key={index}
-                                whileHover={{ y: -5, scale: 1.1, zIndex: 10 }}
-                                transition={{ duration: 0.2 }}
-                                className="relative">
+                                className="relative transition-all duration-300 hover:-translate-y-2 hover:scale-110 hover:z-10">
                                 <img
                                     src={imgSrc || "/api/placeholder/40/40"}
                                     alt={`User ${index + 1}`}
                                     className="w-12 h-12 rounded-full border-[3px] border-background object-cover shadow-lg"
                                 />
-                            </motion.div>
+                            </div>
                         ))}
-                        <div className="w-12 h-12 rounded-full border-[3px] border-background bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-xs font-bold text-white shadow-lg z-0">
+                        <div className="w-12 h-12 rounded-full border-[3px] border-background bg-gradient-to-br from-gray-800 to-black flex items-center justify-center text-xs font-bold text-white shadow-lg z-0 relative hover:-translate-y-2 hover:scale-110 transition-all duration-300">
                             +1.2k
                         </div>
                     </div>
@@ -157,8 +166,8 @@ const HeroSection = () => {
                             Trusted by 1,200+ modern investors
                         </p>
                     </div>
-                </motion.div>
-            </motion.div>
+                </div>
+            </div>
         </section>
     );
 };
