@@ -1,230 +1,243 @@
-// src/pages/FeatureDetailPage.tsx
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+    ArrowLeft,
+    CheckCircle2,
+    AlertCircle,
+    Layers,
+    ShieldCheck,
+    PieChart,
+    Info,
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
-
-// 1. OPTIONAL: Import your real data if you have it separated
-// import { features } from '@/lib/featureData';
-
-// --- MOCK DATA SOURCE ---
-// This ensures the page works immediately without needing external files.
+// --- MOCK DATA ---
 const features = [
-  {
-    id: 'portfolio',
-    title: 'Precision-Engineered Portfolios',
-    tagline: 'Built for resilience. Designed for growth.',
-    description: 'Our algorithms construct portfolios designed to weather market volatility while capturing growth, using institutional-grade asset allocation strategies. We parse millions of data points to ensure your asset mix is perfectly aligned with your risk tolerance.',
-    image: 'https://images.unsplash.com/photo-1611974765270-ca1258634369?q=80&w=2664&auto=format&fit=crop',
-    detailContent: {
-        heading: 'Key Technical Advantages',
-        points: [
-            'Dynamic Rebalancing based on volatility indices',
-            'Tax-loss harvesting automation',
-            'Multi-asset class diversification',
-            'Institutional-grade risk modeling'
-        ]
-    }
-  },
-  {
-    id: 'security',
-    title: 'Bank-Grade Security',
-    tagline: 'Your wealth, protected by the best.',
-    description: 'We utilize 256-bit encryption and biometric verification to ensure your assets and personal data remain impenetrable. Your peace of mind is our top priority.',
-    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1470&auto=format&fit=crop',
-    detailContent: {
-        heading: 'Security Protocols',
-        points: [
-            'AES-256 Encryption Standards',
-            'Biometric Multi-Factor Authentication',
-            'Real-time intrusion detection systems',
-            'Cold storage for digital assets'
-        ]
-    }
-  },
-  {
-    id: 'transparency',
-    title: 'Total Fee Transparency',
-    tagline: 'No hidden costs. Ever.',
-    description: 'See exactly where every dollar goes. We believe in radical transparency, ensuring our incentives are perfectly aligned with your financial success.',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop',
-    detailContent: {
-        heading: 'Our Promise',
-        points: [
-            'Zero hidden management fees',
-            'Real-time expense ratio tracking',
-            'Clear performance reporting',
-            'Fiduciary standard of care'
-        ]
-    }
-  }
+    {
+        id: "portfolio",
+        title: "Precision Portfolios",
+        tagline: "Built for resilience & growth.",
+        description:
+            "Our algorithms construct portfolios designed to weather market volatility while capturing growth. We parse millions of data points to ensure your asset mix is perfectly aligned with your risk tolerance, adjusting automatically as market conditions shift.",
+        // IMAGE CHANGE: Dark 3D Abstract Flow (Black/Metallic)
+        image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2670&auto=format&fit=crop",
+        icon: PieChart,
+        detailContent: {
+            heading: "Technical Specs",
+            points: [
+                "Dynamic Rebalancing (Volatility-based)",
+                "Automated Tax-loss harvesting",
+                "Multi-asset diversification",
+                "Institutional risk modeling",
+            ],
+        },
+    },
+    {
+        id: "security",
+        title: "Bank-Grade Security",
+        tagline: "Impenetrable asset protection.",
+        description:
+            "We utilize 256-bit AES encryption and biometric verification to ensure your assets and personal data remain impenetrable. We employ real-time intrusion detection systems that monitor for anomalies 24/7.",
+        // IMAGE CHANGE: Dark Cyber-Security/Lock (Deep Blue/Black)
+        image: "https://images.unsplash.com/photo-1430276084627-789fe55a6da0?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        icon: ShieldCheck,
+        detailContent: {
+            heading: "Security Protocols",
+            points: [
+                "AES-256 Encryption Standards",
+                "Biometric Multi-Factor Auth",
+                "Real-time intrusion detection",
+                "Cold storage for digital assets",
+            ],
+        },
+    },
+    {
+        id: "transparency",
+        title: "Total Transparency",
+        tagline: "No hidden costs. Ever.",
+        description:
+            "See exactly where every dollar goes. We believe in radical transparency. Our incentives are perfectly aligned with your financial success, with clear, real-time reporting on all expense ratios and management fees.",
+        // IMAGE CHANGE: Dark Architectural Lines/Glass (Minimalist Black)
+        image: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=2574&auto=format&fit=crop",
+        icon: Layers,
+        detailContent: {
+            heading: "The Promise",
+            points: [
+                "Zero hidden management fees",
+                "Real-time expense tracking",
+                "Fiduciary standard of care",
+                "Audit-ready performance logs",
+            ],
+        },
+    },
 ];
 
 const FeatureDetailPage = () => {
-  const { featureId } = useParams();
-  const navigate = useNavigate();
+    const { featureId } = useParams();
+    const navigate = useNavigate();
+    const [isLoaded, setIsLoaded] = useState(false);
 
-  // Scroll to top automatically when the page loads
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [featureId]);
+    useEffect(() => {
+        // Immediate load animation
+        setTimeout(() => setIsLoaded(true), 100);
+    }, [featureId]);
 
-  const feature = features.find(f => f.id === featureId);
+    const feature = features.find((f) => f.id === featureId);
 
-  // --- ERROR STATE (If ID doesn't exist) ---
-  if (!feature) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground relative overflow-hidden">
-        {/* Background Grid */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-        
-        <div className="text-center z-10 px-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-500/10 text-red-500 mb-6">
-            <AlertCircle className="w-8 h-8" />
-          </div>
-          <h1 className="text-4xl font-bold mb-4">Feature Not Found</h1>
-          <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-            We couldn't locate the details for this feature. It may have been moved or removed.
-          </p>
-          <Button onClick={() => navigate('/')} variant="outline" className="border-primary/20 hover:bg-primary/5">
-            Return Home
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Animation Variants for Framer Motion
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-  };
-
-  return (
-    <section className="min-h-screen pt-24 pb-12 bg-background text-foreground relative overflow-hidden">
-        
-        {/* --- BACKGROUND EFFECTS --- */}
-        {/* Grid Overlay */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-        
-        {/* Animated Gradient Blobs */}
-        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none opacity-50" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/10 rounded-full blur-[120px] pointer-events-none opacity-30" />
-
-      <motion.div 
-        className="container mx-auto px-6 relative z-10"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        
-        {/* TOP HEADER SECTION */}
-        <motion.div variants={itemVariants} className="mb-8">
-            <Button 
-                variant="ghost" 
-                onClick={() => navigate(-1)} 
-                className="group pl-0 text-muted-foreground hover:text-primary hover:bg-transparent transition-colors mb-6"
-            >
-                <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
-                Back to Features
-            </Button>
-
-            <div className="max-w-4xl">
-                <h1 className="text-4xl md:text-6xl font-extrabold mb-4 leading-tight tracking-tight">
-                    {feature.title}
-                </h1>
-                <p className="text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400 font-medium">
-                    {feature.tagline}
-                </p>
+    // --- ERROR STATE ---
+    if (!feature) {
+        return (
+            <div className="h-screen flex items-center justify-center bg-background text-foreground relative overflow-hidden">
+                <div
+                    className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                    style={{
+                        backgroundImage:
+                            "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+                        backgroundSize: "40px 40px",
+                    }}
+                />
+                <div className="text-center z-10">
+                    <h1 className="text-2xl font-bold mb-4">
+                        Feature Not Found
+                    </h1>
+                    <Button onClick={() => navigate("/")} variant="outline">
+                        Return Home
+                    </Button>
+                </div>
             </div>
-        </motion.div>
+        );
+    }
 
-        {/* MAIN CONTENT GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"> 
-            
-            {/* Left Column: Image & Overview (Takes up 7 cols) */}
-            <motion.div 
-                variants={itemVariants}
-                className="lg:col-span-7 flex flex-col gap-6"
-            >
-                {/* Image Card Container */}
-                <div className="relative rounded-2xl p-2 bg-background/40 backdrop-blur-md border border-white/10 shadow-2xl overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="relative rounded-xl overflow-hidden aspect-video lg:aspect-[16/10]">
-                        <motion.img 
-                            initial={{ scale: 1.1 }}
-                            animate={{ scale: 1 }}
-                            transition={{ duration: 1.5, ease: "easeOut" }}
-                            src={feature.image} 
-                            alt={feature.title}
-                            className="w-full h-full object-cover" 
-                        />
-                    </div>
-                </div>
+    return (
+        // h-screen ensures NO PAGE SCROLL on desktop.
+        <section className="h-screen w-full bg-background text-foreground relative overflow-hidden flex flex-col items-center justify-center">
+            {/* --- BACKGROUND EFFECTS --- */}
+            <div
+                className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                style={{
+                    backgroundImage:
+                        "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+                    backgroundSize: "40px 40px",
+                }}
+            />
+            <div className="absolute top-0 right-0 w-[50vh] h-[50vh] bg-primary/10 rounded-full blur-[100px] pointer-events-none animate-pulse-slow opacity-50" />
+            <div className="absolute bottom-0 left-0 w-[50vh] h-[50vh] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none opacity-30" />
 
-                {/* Overview Text Box */}
-                <div className="p-8 rounded-2xl bg-card/50 border border-border/50 backdrop-blur-sm">
-                    <h2 className="text-2xl font-bold mb-4">Overview</h2>
-                    <p className="text-lg text-muted-foreground leading-relaxed">
-                        {feature.description}
-                    </p>
-                </div>
-            </motion.div>
+            {/* 
+            --- MAIN GLASS CONSOLE --- 
+            w-[95%] max-w-[1800px] -> Full Screen Width (Command Center Style)
+        */}
+            <div
+                className={`
+                relative w-[95%] max-w-[1800px] h-[90vh]
+                bg-[#0a0a0a]/80 backdrop-blur-2xl border border-white/10 
+                rounded-[2rem] shadow-2xl overflow-hidden 
+                flex flex-col md:flex-row 
+                transition-all duration-700 transform 
+                ${isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"}
+            `}>
+                {/* --- LEFT COLUMN: VISUALS (40% width) --- */}
+                <div className="relative w-full md:w-[40%] h-64 md:h-full group overflow-hidden border-b md:border-b-0 md:border-r border-white/10 bg-black/40">
+                    {/* 
+                    UPDATED IMAGE STYLING:
+                    Added 'grayscale-[0.3]' to slightly desaturate the images 
+                    so they blend perfectly with the black theme.
+                */}
+                    <img
+                        src={feature.image}
+                        alt={feature.title}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 opacity-80 group-hover:opacity-100 grayscale-[0.3] group-hover:grayscale-0"
+                    />
 
-            {/* Right Column: Details List (Takes up 5 cols) */}
-            <motion.div 
-                variants={itemVariants}
-                className="lg:col-span-5 space-y-6"
-            >
-                <div className="p-8 rounded-2xl bg-secondary/20 border border-primary/10 backdrop-blur-md relative overflow-hidden">
-                    {/* Decorative glow inside card */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full pointer-events-none" />
+                    {/* Overlay Gradient: Stronger black fade for text legibility */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
-                    <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                        {feature.detailContent.heading}
-                    </h3>
-                    
-                    <ul className="space-y-4">
-                        {feature.detailContent.points.map((point, index) => (
-                            <motion.li 
-                                key={index}
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.5 + (index * 0.1) }}
-                                className="group flex items-start gap-3 p-3 rounded-lg hover:bg-background/60 transition-colors duration-200 cursor-default"
-                            >
-                                <div className="mt-1 p-1 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                                    <CheckCircle2 className="w-4 h-4" />
-                                </div>
-                                <span className="text-base text-muted-foreground group-hover:text-foreground transition-colors">
-                                    {point}
-                                </span>
-                            </motion.li>
-                        ))}
-                    </ul>
-
-                    <div className="mt-8 pt-6 border-t border-border/50">
-                        <Button className="w-full bg-primary hover:bg-primary/90 text-lg py-6 shadow-lg shadow-primary/20">
-                            Get Started with {feature.title.split(' ')[0]}
+                    {/* Top Left Back Button */}
+                    <div className="absolute top-6 left-6 z-20">
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => navigate(-1)}
+                            className="rounded-full bg-black/50 backdrop-blur-md border border-white/10 hover:bg-white/10 hover:text-white transition-colors">
+                            <ArrowLeft className="w-4 h-4 mr-1" /> Back
                         </Button>
                     </div>
-                </div>
-            </motion.div>
 
-        </div>
-      </motion.div>
-    </section>
-  );
+                    {/* Bottom Title Overlay */}
+                    <div className="absolute bottom-0 left-0 p-8 md:p-12 z-10">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 rounded-full bg-primary/20 text-primary border border-primary/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider">
+                            <feature.icon className="w-3 h-3" />
+                            {feature.id} Protocol
+                        </div>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
+                            {feature.title}
+                        </h1>
+                    </div>
+                </div>
+
+                {/* --- RIGHT COLUMN: DATA (60% width) --- */}
+                <div className="relative w-full md:w-[60%] h-full flex flex-col p-8 md:p-16 overflow-y-auto custom-scrollbar">
+                    <div className="flex-1 flex flex-col justify-center max-w-4xl mx-auto">
+                        {/* Tagline */}
+                        <div className="mb-10 border-l-4 border-primary/50 pl-6 md:pl-8">
+                            <p className="text-2xl md:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 font-medium italic">
+                                "{feature.tagline}"
+                            </p>
+                        </div>
+
+                        {/* Description */}
+                        <div className="mb-12">
+                            <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <Info className="w-4 h-4" /> System Overview
+                            </h3>
+                            <p className="text-lg md:text-xl text-gray-300 leading-relaxed font-light">
+                                {feature.description}
+                            </p>
+                        </div>
+
+                        {/* Technical Specs Grid */}
+                        <div className="bg-white/5 rounded-3xl p-8 border border-white/5">
+                            <h3 className="text-white text-lg font-semibold mb-6 border-b border-white/10 pb-4">
+                                {feature.detailContent.heading}
+                            </h3>
+                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                                {feature.detailContent.points.map(
+                                    (point, index) => (
+                                        <li
+                                            key={index}
+                                            style={{
+                                                transitionDelay: `${
+                                                    200 + index * 50
+                                                }ms`,
+                                            }}
+                                            className={`flex items-start gap-3 transition-all duration-500 transform ${
+                                                isLoaded
+                                                    ? "opacity-100 translate-x-0"
+                                                    : "opacity-0 translate-x-4"
+                                            }`}>
+                                            <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                                            <span className="text-gray-400 text-sm md:text-base font-medium">
+                                                {point}
+                                            </span>
+                                        </li>
+                                    )
+                                )}
+                            </ul>
+                        </div>
+                    </div>
+
+                    {/* Footer Status Line */}
+                    <div className="mt-12 pt-6 border-t border-white/5 flex items-center justify-between text-xs text-muted-foreground uppercase tracking-wider">
+                        <span className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            System Status: Online
+                        </span>
+                        <span>Secure Connection: TLS 1.3</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
 };
 
 export default FeatureDetailPage;
