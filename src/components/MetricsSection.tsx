@@ -205,7 +205,7 @@ const MetricsSection = () => {
                 {/* Trust Divider (Fade In) */}
                 <div
                     style={{ transitionDelay: "600ms" }}
-                    className={`mt-16 pt-8 border-t border-white/5 text-center transition-all duration-1000 ${
+                    className={`mt-16 pt-8 text-center transition-all duration-1000 ${
                         isVisible ? "opacity-100" : "opacity-0"
                     }`}>
                     <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
