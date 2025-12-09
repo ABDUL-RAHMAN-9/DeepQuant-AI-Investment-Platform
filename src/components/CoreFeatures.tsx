@@ -96,8 +96,8 @@ const CoreFeatures = () => {
             ref={sectionRef}
             className="py-24 relative overflow-hidden bg-background text-foreground">
             {/* --- BACKGROUND EFFECTS --- */}
-            <div
-                className="absolute inset-0 opacity-[0.03] pointer-events-none"
+             <div
+                className="absolute inset-0 opacity-[0.03] pointer-events-none [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]"
                 style={{
                     backgroundImage:
                         "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
