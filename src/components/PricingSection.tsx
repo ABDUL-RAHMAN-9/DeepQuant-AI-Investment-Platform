@@ -63,24 +63,27 @@ const PricingSection = () => {
             id="pricing"
             ref={sectionRef}
             className="py-24 relative overflow-hidden bg-background text-foreground">
-            {/* --- BACKGROUND EFFECTS --- */}
-
-            {/* 1. GRID LAYER WITH MASK (Fade Effect) */}
+            {/* --- BACKGROUND GRID LAYER --- */}
             <div
-                className="absolute inset-0 opacity-[0.03] pointer-events-none [mask-image:linear-gradient(to_bottom,transparent,black_20%,black_80%,transparent)]"
+                className="absolute inset-0 opacity-[0.04] pointer-events-none
+    [mask-image:linear-gradient(to_bottom,rgba(0,0,0,0.20),rgba(0,0,0,1)_40%,rgba(0,0,0,1)_60%,rgba(0,0,0,0.20))]"
                 style={{
-                    backgroundImage:
-                        "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+                    backgroundImage: `
+                        linear-gradient(rgba(255,255,255,0.9) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.9) 1px, transparent 1px)
+                    `,
                     backgroundSize: "40px 40px",
                 }}
             />
-            {/* Top Left Glow */}
+
+            {/* TOP LEFT GLOW */}
             <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-500/10 blur-[120px] rounded-full pointer-events-none" />
-            {/* Bottom Right Glow */}
+
+            {/* BOTTOM RIGHT GLOW */}
             <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
 
             <div className="container mx-auto px-6 relative z-10">
-                {/* Header Section */}
+                {/* HEADER */}
                 <div
                     className={`text-center mb-16 transition-all duration-1000 transform ${
                         isVisible
@@ -96,16 +99,14 @@ const PricingSection = () => {
                         Choose the solution that fits your investing goals
                     </p>
 
-                    {/* Custom Toggle Button (Pure Tailwind) */}
+                    {/* TOGGLE */}
                     <div className="inline-flex items-center bg-muted/50 p-1 rounded-xl relative border border-white/5 backdrop-blur-sm">
-                        {/* The Sliding Background Pill */}
                         <div
                             className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-primary rounded-lg shadow-lg shadow-primary/20 transition-transform duration-300 ease-in-out ${
                                 isYearly ? "translate-x-full" : "translate-x-0"
                             }`}
                         />
 
-                        {/* Buttons */}
                         <button
                             onClick={() => setIsYearly(false)}
                             className={`relative z-10 px-8 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 w-32 ${
@@ -115,6 +116,7 @@ const PricingSection = () => {
                             }`}>
                             Monthly
                         </button>
+
                         <button
                             onClick={() => setIsYearly(true)}
                             className={`relative z-10 px-8 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 w-32 ${
@@ -127,7 +129,7 @@ const PricingSection = () => {
                     </div>
                 </div>
 
-                {/* Pricing Cards */}
+                {/* PRICING CARDS */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     {plans.map((plan, index) => {
                         const isPopular = isYearly ? index === 1 : index === 0;
@@ -136,7 +138,6 @@ const PricingSection = () => {
                             : plan.prices.monthly;
 
                         return (
-                            // OUTER WRAPPER: Staggered Entrance
                             <div
                                 key={plan.id}
                                 style={{ transitionDelay: `${index * 150}ms` }}
@@ -145,19 +146,16 @@ const PricingSection = () => {
                                         ? "opacity-100 translate-y-0"
                                         : "opacity-0 translate-y-12"
                                 }`}>
-                                {/* INNER CARD: Hover Effects */}
                                 <div
                                     className={`relative p-8 h-full rounded-[24px] transition-all duration-300 ease-out transform hover:-translate-y-3 ${
                                         isPopular
                                             ? "border border-primary/50 bg-background/60 backdrop-blur-xl shadow-2xl shadow-primary/10"
                                             : "border border-white/10 bg-background/30 backdrop-blur-md hover:border-white/20"
                                     }`}>
-                                    {/* Background Glow for Popular Card */}
                                     {isPopular && (
                                         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/5 to-transparent rounded-[24px] pointer-events-none" />
                                     )}
 
-                                    {/* "Best Value" Badge */}
                                     <div
                                         className={`absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary rounded-full text-xs font-bold text-primary-foreground shadow-[0_0_20px_-5px_rgba(var(--primary-rgb),0.6)] z-20 transition-opacity duration-300 ${
                                             isPopular
@@ -175,13 +173,13 @@ const PricingSection = () => {
                                         <div className="mb-6 overflow-hidden flex items-end">
                                             <span className="text-5xl font-bold flex items-center tracking-tight">
                                                 $
-                                                {/* Simple CSS Fade Animation on Value Change */}
                                                 <span
                                                     key={currentPrice}
                                                     className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                                                     {currentPrice}
                                                 </span>
                                             </span>
+
                                             <span className="text-muted-foreground mb-1 ml-1 text-lg">
                                                 /{isYearly ? "year" : "month"}
                                             </span>
@@ -201,6 +199,7 @@ const PricingSection = () => {
                                                             }`}>
                                                             <Check className="w-3.5 h-3.5" />
                                                         </div>
+
                                                         <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">
                                                             {feature}
                                                         </span>
