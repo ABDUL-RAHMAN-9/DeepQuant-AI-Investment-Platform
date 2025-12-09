@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ChevronRight, PlayCircle } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
+import demoVideo from "@/assets/videos/demo_video.mp4";
 
 // --- IMAGE IMPORTS ---
 import img1 from "@/assets/img-1.avif";
@@ -33,15 +34,21 @@ const HeroSection = () => {
     const sectionRef = useRef<HTMLElement>(null);
     const isVisible = useIsVisible(sectionRef);
 
+    // Video Modal state
+    const [showVideoModal, setShowVideoModal] = useState(false);
+
+    // Scroll helpers
+    const scrollToSection = (id: string) => {
+        const element = document.getElementById(id);
+        element?.scrollIntoView({ behavior: "smooth" });
+    };
+
     return (
         <section
             ref={sectionRef}
             id="home"
-            // IMPORTANT: bg-transparent allows the Spline Orb (in Index.tsx) to show through
             className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 bg-transparent">
             {/* --- BACKGROUND LAYER --- */}
-
-            {/* 1. Gradient Vignette - Makes white text readable against the colorful Orb */}
             <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-transparent to-background z-0" />
 
             {/* --- CONTENT LAYER --- */}
@@ -103,26 +110,23 @@ const HeroSection = () => {
                             ? "opacity-100 translate-y-0"
                             : "opacity-0 translate-y-12"
                     }`}>
-                    {/* Primary Button */}
-                    <Button
-                        size="lg"
-                        className="group relative h-14 px-8 text-lg bg-primary hover:bg-primary/90 text-primary-foreground overflow-hidden rounded-full shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-105">
-                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
-                        <span className="relative flex items-center gap-2">
-                            Get Started
-                            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                        </span>
-                    </Button>
-
-                    {/* Secondary Button */}
+                    {/* Watch Demo → Open Modal */}
                     <Button
                         size="lg"
                         variant="outline"
-                        className="h-14 px-8 text-lg border-2 border-primary/20 hover:border-primary/50 bg-background/50 backdrop-blur-sm hover:bg-primary/10 rounded-full transition-all duration-300 group">
+                        className="h-14 px-8 text-lg border-2 border-primary/20 hover:border-primary/50 bg-background/50 backdrop-blur-sm rounded-full transition-all duration-300 group"
+                        onClick={() => setShowVideoModal(true)}>
                         <span className="flex items-center gap-2 text-foreground/90">
                             <PlayCircle className="w-5 h-5 group-hover:text-primary transition-colors" />
                             Watch Demo
                         </span>
+                    </Button>
+
+                    <Button
+                        size="lg"
+                        className="h-14 px-8 text-lg bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg shadow-primary/20 text-shadow-lg transition-all duration-300 hover:scale-105"
+                        onClick={() => scrollToSection("features")}>
+                        Learn More
                     </Button>
                 </div>
 
@@ -168,6 +172,26 @@ const HeroSection = () => {
                     </div>
                 </div>
             </div>
+
+            {/* --- VIDEO MODAL --- */}
+            {showVideoModal && (
+                <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+                    <div className="bg-background rounded-xl p-4 max-w-3xl w-full relative">
+                        <button
+                            className="absolute top-3 right-3 text-white text-lg font-bold"
+                            onClick={() => setShowVideoModal(false)}>
+                            ✕
+                        </button>
+
+                        <video
+                            className="w-full h-64 md:h-96 rounded-xl"
+                            src={demoVideo}
+                            controls
+                            autoPlay
+                        />
+                    </div>
+                </div>
+            )}
         </section>
     );
 };
